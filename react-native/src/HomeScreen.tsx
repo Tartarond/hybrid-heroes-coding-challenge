@@ -8,6 +8,7 @@ import { RootState } from "./store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StackScreenProps } from "@react-navigation/stack";
 import { StackParamList } from "./App";
+import ProductItem from "./ProductItem";
 
 export default (props: StackScreenProps<StackParamList, "Home">) => {
   const fetching = useSelector((state: RootState) => state.inventory.fetching);
@@ -37,21 +38,9 @@ export default (props: StackScreenProps<StackParamList, "Home">) => {
         }
       >
         <SafeAreaView edges={["left", "bottom", "right"]}>
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Product Code</DataTable.Title>
-              <DataTable.Title numeric>Scan Date</DataTable.Title>
-            </DataTable.Header>
             {inventory.map((record, index) => (
-              <DataTable.Row key={index}>
-                <DataTable.Cell>{record.fields["Product Code"]}</DataTable.Cell>
-                <DataTable.Cell numeric>
-                  {new Date(record.fields.Posted).toLocaleDateString()}{" "}
-                  {new Date(record.fields.Posted).toLocaleTimeString()}
-                </DataTable.Cell>
-              </DataTable.Row>
+              <ProductItem record={record}></ProductItem>
             ))}
-          </DataTable>
         </SafeAreaView>
       </ScrollView>
 
