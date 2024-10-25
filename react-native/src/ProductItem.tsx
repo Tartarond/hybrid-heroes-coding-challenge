@@ -1,4 +1,4 @@
-import { Card, Title, Paragraph, IconButton } from "react-native-paper"
+import { Card, Title, Paragraph, Chip } from "react-native-paper"
 import React, { useState } from "react";
 import { StyleSheet, View, Image} from "react-native"
 import { Inventory } from "./store/inventory";
@@ -14,6 +14,8 @@ function isProductNewByDate(dateToCheck: Date): boolean {
 
 export default({ record }: { record: Inventory }) => {
     const [expanded, setExpanded] = useState(false);
+
+    const categories = record.fields["Product Categories"]?.split(", ")
 
     return (
         <Card style={styles.card}>
@@ -61,6 +63,15 @@ export default({ record }: { record: Inventory }) => {
                     <Paragraph>
                         {new Date(record.fields.Posted).toLocaleDateString()}
                     </Paragraph>
+
+                    <View style={styles.categoryContainer}>
+                        {expanded && categories?.map((category, index) => (
+                            <Chip style={styles.category} key={index}>
+                                {category}
+                            </Chip>
+                        ))}
+                    </View>
+
                 </Card.Content>
             </View>
         </Card>
@@ -79,10 +90,10 @@ const styles = StyleSheet.create({
         aspectRatio: 1
     },
     image: {
-        width: '100%', // Set width for the image
-        height: '100%', // Set height for the image
-        borderRadius: 10, // Optional: Round the corners of the image
-        marginRight: 5, // Space between the image and text
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
+        marginRight: 5,
     },
     cardContent: {
         flex: 1,
@@ -99,5 +110,12 @@ const styles = StyleSheet.create({
     },
     headerIcons: {
         flexDirection: 'row'
+    },
+    categoryContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap'
+    },
+    category: {
+        margin: 2
     }
 });
