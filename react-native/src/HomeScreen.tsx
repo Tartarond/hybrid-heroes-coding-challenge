@@ -39,7 +39,7 @@ export default (props: StackScreenProps<StackParamList, "Home">) => {
       >
         <SafeAreaView edges={["left", "bottom", "right"]}>
             {inventory.map((record, index) => (
-              <ProductItem record={record}></ProductItem>
+              <ProductItem record={record} key={index}></ProductItem>
             ))}
         </SafeAreaView>
       </ScrollView>
