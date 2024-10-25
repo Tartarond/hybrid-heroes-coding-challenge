@@ -37,7 +37,7 @@ export default (props: StackScreenProps<StackParamList, "Home">) => {
           />
         }
       >
-        <SafeAreaView edges={["left", "bottom", "right"]}>
+        <SafeAreaView edges={["left", "bottom", "right"]} style={styles.productItemContainer}>
             {inventory.map((record, index) => (
               <ProductItem record={record} key={index}></ProductItem>
             ))}
@@ -64,5 +64,9 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     alignItems: "center"
+  },
+  productItemContainer: {
+    gap: 12,
+    margin: 16
   }
 });
