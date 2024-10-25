@@ -5,29 +5,37 @@ import { Inventory } from "./store/inventory";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 function isProductNewByDate(dateToCheck: Date): boolean {
-    const currentDate = new Date(); // Get the current date
+    // Get the current date
+    const currentDate = new Date(); 
     const sevenDaysAgo = new Date(currentDate);
-    sevenDaysAgo.setDate(currentDate.getDate() - 7); // Set to 7 days ago
+    // Set to 7 days ago
+    sevenDaysAgo.setDate(currentDate.getDate() - 7); 
 
+    // Check if the given date is not in the future and maximum seven days in the past
     return dateToCheck >= sevenDaysAgo && dateToCheck <= currentDate;
 }
 
 
 export default({ record }: { record: Inventory }) => {
+    // Hook to store if the Card is expanded
     const [expanded, setExpanded] = useState(false);
+
+    // Get the images aspect ratio and store it in the hook
     const [imageAspectRatio, setImageAspectRatio] = useState(1);
-
-    const categories = record.fields["Product Categories"]?.split(", ")
-
     Image.getSize(record.fields["Product Image"], (width, height) => {setImageAspectRatio(width/height)}, (_) => {setImageAspectRatio(1)})
+
+    // Convert category array to a string
+    const categories = record.fields["Product Categories"]?.split(", ")
     
     return (
         <Card>
             <View style={styles.container}>
-                <View style = {styles.imageContainer}>            
+                {/* This container contains either the product image or a fallback icon */}
+                <View style = {styles.imageContainer}>
                     {record.fields["Product Image"] ? (
                         <Image 
                             source={{ uri: record.fields["Product Image"] }}
+                            // dynamically set the aspect ratio
                             style={[styles.image, {aspectRatio:expanded ? imageAspectRatio : 1}]}
                         />
                     ) : (
@@ -39,8 +47,11 @@ export default({ record }: { record: Inventory }) => {
                     )}
                 </View>
 
+                {/* The rest of the card content */}
                 <View style={styles.cardContent}>
+                    {/* The title row and the date of the component */}
                     <View style={styles.titleDateContainer}>
+                        {/* The title row contains the title of the card, possibly a new icon and the expand/collapse button */}
                         <View style={styles.titleRow}>
                             <Text numberOfLines={expanded ? undefined : 1} style={styles.title}>{record.fields["Product Name"]}</Text>
                             <View style={styles.headerIcons}>
@@ -66,11 +77,13 @@ export default({ record }: { record: Inventory }) => {
                             </View>
                         </View>
 
+                        {/* the date on which the product was added */}
                         <Text style={styles.date}>
                             {new Date(record.fields.Posted).toLocaleDateString()}
                         </Text>
                     </View>
 
+                    {/* The container containing the category tags */}
                     <View style={styles.categoryContainer}>
                         {expanded && categories?.map((category, index) => (
                             <View style={styles.category} key={index}>
