@@ -4,6 +4,14 @@ import { StyleSheet, View, Image} from "react-native"
 import { Inventory } from "./store/inventory";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+function isProductNewByDate(dateToCheck: Date): boolean {
+    const currentDate = new Date(); // Get the current date
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7); // Set to 7 days ago
+    
+    return dateToCheck >= sevenDaysAgo && dateToCheck <= currentDate;
+}
+
 export default({ record }: { record: Inventory }) => {
     return (
         <Card style={styles.card}>
@@ -23,7 +31,16 @@ export default({ record }: { record: Inventory }) => {
                     )}
                 </View>
                 <Card.Content style={styles.cardContent}>
-                    <Title numberOfLines={1}>{record.fields["Product Name"]}</Title>
+                    <View style={styles.titleRow}>
+                        <Title numberOfLines={1} style={styles.title}>{record.fields["Product Name"]}</Title>
+                        {isProductNewByDate(new Date(record.fields.Posted)) &&                         
+                            <MaterialCommunityIcons
+                                name="new-box"
+                                size={30}
+                            ></MaterialCommunityIcons>
+                        }
+                    </View>
+                    
                     <Paragraph>
                         {new Date(record.fields.Posted).toLocaleDateString()}
                     </Paragraph>
@@ -51,6 +68,16 @@ const styles = StyleSheet.create({
         marginRight: 5, // Space between the image and text
     },
     cardContent: {
-        flex: 1
+        flex: 1,
+        padding: 10
+    },
+    titleRow: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between'
+    },
+    title: {
+        marginRight: 10,
+        flexShrink: 1
     }
 });
