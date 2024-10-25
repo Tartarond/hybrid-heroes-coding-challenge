@@ -1,5 +1,5 @@
-import { Text, Card, Title, Paragraph } from "react-native-paper"
-import React from "react";
+import { Card, Title, Paragraph, IconButton } from "react-native-paper"
+import React, { useState } from "react";
 import { StyleSheet, View, Image} from "react-native"
 import { Inventory } from "./store/inventory";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -8,11 +8,13 @@ function isProductNewByDate(dateToCheck: Date): boolean {
     const currentDate = new Date(); // Get the current date
     const sevenDaysAgo = new Date(currentDate);
     sevenDaysAgo.setDate(currentDate.getDate() - 7); // Set to 7 days ago
-    
+
     return dateToCheck >= sevenDaysAgo && dateToCheck <= currentDate;
 }
 
 export default({ record }: { record: Inventory }) => {
+    const [expanded, setExpanded] = useState(false);
+
     return (
         <Card style={styles.card}>
             <View style={styles.container}>
@@ -24,23 +26,38 @@ export default({ record }: { record: Inventory }) => {
                         />
                     ) : (
                         <MaterialCommunityIcons
-                            name="image-off-outline" // Placeholder icon name
-                            color="gray" // Icon color for placeholder
+                            name="image-off-outline"
+                            color="gray"
                             size={80}
                         />
                     )}
                 </View>
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.titleRow}>
-                        <Title numberOfLines={1} style={styles.title}>{record.fields["Product Name"]}</Title>
-                        {isProductNewByDate(new Date(record.fields.Posted)) &&                         
-                            <MaterialCommunityIcons
-                                name="new-box"
-                                size={30}
-                            ></MaterialCommunityIcons>
-                        }
+                        <Title numberOfLines={expanded ? undefined : 1} style={styles.title}>{record.fields["Product Name"]}</Title>
+                        <View style={styles.headerIcons}>
+                            {isProductNewByDate(new Date(record.fields.Posted)) &&
+                                <MaterialCommunityIcons
+                                    name="new-box"
+                                    size={30}
+                                />
+                            }
+                            {expanded ? (
+                                <MaterialCommunityIcons
+                                    name="chevron-up"
+                                    size={30}
+                                    onPress={() => setExpanded(false)}
+                                />
+                            ) : (
+                                <MaterialCommunityIcons
+                                    name="chevron-down"
+                                    size={30}
+                                    onPress={() => setExpanded(true)}
+                                />
+                            )}
+                        </View>
                     </View>
-                    
+
                     <Paragraph>
                         {new Date(record.fields.Posted).toLocaleDateString()}
                     </Paragraph>
@@ -79,5 +96,8 @@ const styles = StyleSheet.create({
     title: {
         marginRight: 10,
         flexShrink: 1
+    },
+    headerIcons: {
+        flexDirection: 'row'
     }
 });
