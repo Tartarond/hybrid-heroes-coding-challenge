@@ -28,80 +28,90 @@ export default({ record }: { record: Inventory }) => {
     const categories = record.fields["Product Categories"]?.split(", ")
     
     return (
-        <Card>
-            <View style={styles.container}>
-                {/* This container contains either the product image or a fallback icon */}
-                <View style = {styles.imageContainer}>
-                    {record.fields["Product Image"] ? (
-                        <Image 
-                            source={{ uri: record.fields["Product Image"] }}
-                            // dynamically set the aspect ratio
-                            style={[styles.image, {aspectRatio:expanded ? imageAspectRatio : 1}]}
-                        />
-                    ) : (
-                        <MaterialCommunityIcons
-                            name="image-off-outline"
-                            color="gray"
-                            size={85}
-                        />
-                    )}
+        <View style={styles.cardContainer}>
+            {/* This container contains either the product image or a fallback icon */}
+            <View style = {styles.imageContainer}>
+                {record.fields["Product Image"] ? (
+                    <Image 
+                        source={{ uri: record.fields["Product Image"] }}
+                        // dynamically set the aspect ratio
+                        style={[styles.image, {aspectRatio:expanded ? imageAspectRatio : 1}]}
+                    />
+                ) : (
+                    <MaterialCommunityIcons
+                        name="image-off-outline"
+                        color="gray"
+                        size={85}
+                    />
+                )}
+            </View>
+
+            {/* The rest of the card content */}
+            <View style={styles.cardContent}>
+                {/* The title row and the date of the component */}
+                <View style={styles.titleDateContainer}>
+                    {/* The title row contains the title of the card, possibly a new icon and the expand/collapse button */}
+                    <View style={styles.titleRow}>
+                        <Text numberOfLines={expanded ? undefined : 1} style={styles.title}>{record.fields["Product Name"]}</Text>
+                        <View style={styles.headerIcons}>
+                            {isProductNewByDate(new Date(record.fields.Posted)) &&
+                                <MaterialCommunityIcons
+                                    name="new-box"
+                                    size={24}
+                                />
+                            }
+                            {expanded ? (
+                                <MaterialCommunityIcons
+                                    name="chevron-up"
+                                    size={24}
+                                    onPress={() => setExpanded(false)}
+                                />
+                            ) : (
+                                <MaterialCommunityIcons
+                                    name="chevron-down"
+                                    size={24}
+                                    onPress={() => setExpanded(true)}
+                                />
+                            )}
+                        </View>
+                    </View>
+
+                    {/* the date on which the product was added */}
+                    <Text style={styles.date}>
+                        {new Date(record.fields.Posted).toLocaleDateString()}
+                    </Text>
                 </View>
 
-                {/* The rest of the card content */}
-                <View style={styles.cardContent}>
-                    {/* The title row and the date of the component */}
-                    <View style={styles.titleDateContainer}>
-                        {/* The title row contains the title of the card, possibly a new icon and the expand/collapse button */}
-                        <View style={styles.titleRow}>
-                            <Text numberOfLines={expanded ? undefined : 1} style={styles.title}>{record.fields["Product Name"]}</Text>
-                            <View style={styles.headerIcons}>
-                                {isProductNewByDate(new Date(record.fields.Posted)) &&
-                                    <MaterialCommunityIcons
-                                        name="new-box"
-                                        size={24}
-                                    />
-                                }
-                                {expanded ? (
-                                    <MaterialCommunityIcons
-                                        name="chevron-up"
-                                        size={24}
-                                        onPress={() => setExpanded(false)}
-                                    />
-                                ) : (
-                                    <MaterialCommunityIcons
-                                        name="chevron-down"
-                                        size={24}
-                                        onPress={() => setExpanded(true)}
-                                    />
-                                )}
-                            </View>
+                {/* The container containing the category tags */}
+                <View style={styles.categoryContainer}>
+                    {expanded && categories?.map((category, index) => (
+                        <View style={styles.category} key={index}>
+                            <Text numberOfLines={1} style={styles.categoryText}>{category}</Text>
                         </View>
-
-                        {/* the date on which the product was added */}
-                        <Text style={styles.date}>
-                            {new Date(record.fields.Posted).toLocaleDateString()}
-                        </Text>
-                    </View>
-
-                    {/* The container containing the category tags */}
-                    <View style={styles.categoryContainer}>
-                        {expanded && categories?.map((category, index) => (
-                            <View style={styles.category} key={index}>
-                                <Text numberOfLines={1} style={styles.categoryText}>{category}</Text>
-                            </View>
-                        ))}
-                    </View>
+                    ))}
                 </View>
             </View>
-        </Card>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
+    cardContainer: {
         flexDirection: 'row',
         padding: 8,
-        gap: 12
+        gap: 12,
+        borderRadius: 4,
+        backgroundColor: '#F8F9FC',
+        // iOS shadow properties
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3,
+        // Android shadow property
+        elevation: 3,
     },
     imageContainer: {
         width: 85,
