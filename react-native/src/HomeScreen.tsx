@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect } from "react";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, DataTable, FAB } from "react-native-paper";
+import { RefreshControl, ScrollView, StyleSheet, View, FlatList } from "react-native";
+import { Appbar, FAB } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { selectors, actions } from "./store/inventory";
 import { RootState } from "./store";
@@ -28,7 +28,7 @@ export default (props: StackScreenProps<StackParamList, "Home">) => {
         <Appbar.Content title="Inventory" />
       </Appbar.Header>
 
-      <ScrollView
+      {/* <ScrollView
         style={{ flex: 1 }}
         refreshControl={
           <RefreshControl
@@ -39,10 +39,30 @@ export default (props: StackScreenProps<StackParamList, "Home">) => {
       >
         <SafeAreaView edges={["left", "bottom", "right"]} style={styles.productItemContainer}>
             {inventory.map((record, index) => (
-              <ProductItem record={record} key={index}></ProductItem>
+              <ProductItem inventory={record} key={index}></ProductItem>
             ))}
         </SafeAreaView>
-      </ScrollView>
+      </ScrollView> */}
+
+      <FlatList
+        style={styles.productItemContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={fetching}
+            onRefresh={() => dispatch(actions.fetchInventory())}
+          />
+        }
+        data={inventory}
+        renderItem={
+          ({ item, index} ) => (
+            <ProductItem inventory={item} key={index}></ProductItem>
+          )
+        }
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
+        windowSize={11}
+      />
 
       <SafeAreaView style={styles.fab}>
         <FAB
@@ -66,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   productItemContainer: {
-    gap: 12,
-    margin: 16
+    flex: 1,
+    padding: 16
   }
 });

@@ -15,16 +15,16 @@ function isProductNewByDate(dateToCheck: Date): boolean {
     return dateToCheck >= sevenDaysAgo && dateToCheck <= currentDate;
 }
 
-export default({ record }: { record: Inventory }) => {
+export default React.memo(({ inventory }: { inventory: Inventory }) => {
     // Hook to store if the Card is expanded
     const [expanded, setExpanded] = useState(false);
 
     // Get the images aspect ratio and store it in the hook
     const [imageAspectRatio, setImageAspectRatio] = useState(1);
-    Image.getSize(record.fields["Product Image"], (width, height) => {setImageAspectRatio(width/height)}, (_) => {setImageAspectRatio(1)})
+    Image.getSize(inventory.fields["Product Image"], (width, height) => {setImageAspectRatio(width/height)}, (_) => {setImageAspectRatio(1)})
 
     // Convert category array to a string
-    const categories = record.fields["Product Categories"]?.split(", ")
+    const categories = inventory.fields["Product Categories"]?.split(", ")
     
     return (
         // Touchable component to handle press event
@@ -32,9 +32,9 @@ export default({ record }: { record: Inventory }) => {
             <View style={styles.cardContainer}>
                 {/* This container contains either the product image or a fallback icon */}
                 <View style = {styles.imageContainer}>
-                    {record.fields["Product Image"] ? (
+                    {inventory.fields["Product Image"] ? (
                         <Image 
-                            source={{ uri: record.fields["Product Image"] }}
+                            source={{ uri: inventory.fields["Product Image"] }}
                             // dynamically set the aspect ratio
                             style={[styles.image, {aspectRatio:expanded ? imageAspectRatio : 1}]}
                         />
@@ -53,9 +53,9 @@ export default({ record }: { record: Inventory }) => {
                     <View style={styles.titleDateContainer}>
                         {/* The title row contains the title of the card, possibly a new icon and the expand/collapse button */}
                         <View style={styles.titleRow}>
-                            <Text numberOfLines={expanded ? undefined : 1} style={styles.title}>{record.fields["Product Name"]}</Text>
+                            <Text numberOfLines={expanded ? undefined : 1} style={styles.title}>{inventory.fields["Product Name"]}</Text>
                             <View style={styles.headerIcons}>
-                                {isProductNewByDate(new Date(record.fields.Posted)) &&
+                                {isProductNewByDate(new Date(inventory.fields.Posted)) &&
                                     <MaterialCommunityIcons
                                         name="new-box"
                                         size={24}
@@ -70,7 +70,7 @@ export default({ record }: { record: Inventory }) => {
 
                         {/* the date on which the product was added */}
                         <Text style={styles.date}>
-                            {new Date(record.fields.Posted).toLocaleDateString()}
+                            {new Date(inventory.fields.Posted).toLocaleDateString()}
                         </Text>
                     </View>
 
@@ -86,7 +86,7 @@ export default({ record }: { record: Inventory }) => {
             </View>
         </TouchableHighlight>
     )
-}
+})
 
 const styles = StyleSheet.create({
     touchable: {
